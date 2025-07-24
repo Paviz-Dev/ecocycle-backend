@@ -1,12 +1,11 @@
-// routes/auth.js
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 require("dotenv").config();
-const JWT_SECRET = process.env.JWT_SECRET;
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // -------------------- REGISTER --------------------
 router.post("/register", async (req, res) => {
@@ -46,9 +45,6 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password." });
     }
-
-    console.log("Fetched user:", user);
-    console.log("Stored hashed password:", user.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {

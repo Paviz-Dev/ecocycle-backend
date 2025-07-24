@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,10 +7,15 @@ const authRoutes = require("./routes/auth");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// ✅ Middleware
+app.use(cors({
+  origin: "*",
+  credentials: true
+}));
 app.use(express.json());
 
-// ✅ Connect to MongoDB
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -19,9 +23,23 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log("✅ Connected to MongoDB"))
 .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Routes
+// ✅ API Routes
 app.use("/api/auth", authRoutes);
 
-// ✅ Server listen
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Backend is alive!" });
+});
+
+// ✅ Optional: Serve frontend (only if hosting frontend here)
+// Commented because you're using Netlify or Vercel
+/*
+const path = require("path");
+app.use(express.static(path.join(__dirname, "../ecocycle-frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../ecocycle-frontend/dist/index.html"));
+});
+*/
+
+// ✅ Start Server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
